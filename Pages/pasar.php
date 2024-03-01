@@ -71,43 +71,115 @@
         </div>
     </div>
 
-    <div class="container-fluid p-2 pb-3" style="background-color: #F6F6F6;">
+    <div class="container-fluid p-2 pb-3 pt-3" style="background-color: #F6F6F6;">
         <div class="container-fluid">
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+            <div class="row row-cols-2 row-cols-md-3 justify-content-center">
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
+                    </div>
+                </div>
+                <div class="card px-0 m-1" style="width: 12rem;">
+                    <a href="deskripsi.php">
+                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text mb-0 card-judul">Asam Urat</p>
+                        <p class="card-text card-harga">Rp 25.000</p>
                     </div>
                 </div>
             </div>

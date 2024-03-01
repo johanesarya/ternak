@@ -62,3 +62,32 @@
   text-decoration: none;
   color: #7fd0a7;
 }
+
+.card-judul {
+  font-family: POPPINBOLD;
+  text-align: center;
+}
+
+.card-harga {
+  font-family: POPPIN;
+  color: #7fd0a7;
+  text-align: center;
+}
+
+.col-deskripsi h2,
+h3 {
+  font-family: POPPINBOLD;
+}
+
+.col-deskripsi h6 {
+  font-family: POPPIN;
+  color: grey;
+}
+
+.text-counter {
+  font-family: POPPIN;
+}
+
+.container-fluid h3 {
+  font-family: POPPIN;
+}
