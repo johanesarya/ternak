@@ -1,0 +1,64 @@
+@font-face {
+  font-family: "POPPINBOLD";
+  src: url("../Fonts/Poppins/Poppins-Bold.woff2") format("woff2"); /* Format WOFF2 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "POPPINSEMIBOLD";
+  src: url("../Fonts/Poppins/Poppins-SemiBold.woff2") format("woff2"); /* Format WOFF2 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "POPPIN";
+  src: url("../Fonts/Poppins/Poppins-Regular.woff2") format("woff2"); /* Format WOFF2 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "POPPINEXTRABOLD";
+  src: url("../Fonts/Poppins/Poppins-ExtraBold.woff2") format("woff2"); /* Format WOFF2 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+.nav-link {
+  font-size: 20px;
+  color: #7fd0a7;
+  font-family: POPPINBOLD;
+}
+
+.nav-item {
+  margin-right: 20px;
+}
+
+.container-fluid h1 {
+  font-family: POPPINBOLD;
+}
+
+.container-fluid .text-start {
+  font-family: POPPINBOLD;
+}
+
+.btn.btn-outline-primary:hover {
+  background-color: transparent;
+  color: #7fd0a7;
+  border-color: #7fd0a7;
+}
+
+.modal {
+  font-family: POPPIN;
+}
+
+.modal-title {
+  font-family: POPPINBOLD;
+}
+
+.daftar a {
+  text-decoration: none;
+  color: #7fd0a7;
+}
