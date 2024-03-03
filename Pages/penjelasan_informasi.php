@@ -101,7 +101,7 @@ $stmt->close();
                             <i class="fa-solid fa-circle-info fa-xl pe-2" style="color: #7fd0a7;"></i>
                         </a>
                         <a href="user.php">
-                            <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                            <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" height="60" width="60">
                         </a>
                     </div>
                 </form>
@@ -115,7 +115,7 @@ $stmt->close();
                 <div class="col-md-3 d-flex justify-content-center align-items-center">
                     <img src="<?= $foto; ?>" width="500" class="img-fluid" alt="User Photo">
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-7 pt-3">
                     <h1><?= $judul; ?></h1>
                     <p><?= $deskripsi; ?></p>
                 </div>

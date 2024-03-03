@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['keyword'])) {
                     <i class="fa-solid fa-store fa-xl pe-4" style="color: #7fd0a7;"></i>
                 </a>
                 <a href="user.php">
-                    <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                    <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" height="60" width="60">
                 </a>
             </div>
         </div>
@@ -171,7 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['keyword'])) {
                         $harga_rupiah = "Rp " . number_format($harga, 0, ',', '.');
 
                         // Link to deskripsi.php with ID barang as parameter
-                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<div class="card px-0 m-1" style="width: 10rem;">';
                         echo '<a href="deskripsi.php?id=' . $id . '">';
                         echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
                         echo '</a>';

@@ -165,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $judul = $row['judul'];
                         $deskripsi = $row['deskripsi'];
                         $foto = str_replace('../Users', 'Users', $row['foto']);
-                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<div class="card px-0 m-1" style="width: 10rem;">';
                         echo '<a href="#" onclick="return cekLogin()">';
                         echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
                         echo '</a>';

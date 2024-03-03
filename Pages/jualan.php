@@ -157,7 +157,7 @@ $stmt->close();
                             <i class="fa-solid fa-store fa-xl pe-4" style="color: #7fd0a7;"></i>
                         </a>
                         <a href="user.php">
-                            <img src="<?php echo $foto; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                            <img src="<?php echo $foto; ?>" class="rounded-circle" alt="Ternakku" height="60" width="60">
                         </a>
                     </div>
                 </form>

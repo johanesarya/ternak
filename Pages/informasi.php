@@ -101,7 +101,7 @@ if (isset($_POST['info'])) {
                             <i class="fa-solid fa-circle-info fa-xl pe-2" style="color: #7fd0a7;"></i>
                         </a>
                         <a href="user.php">
-                            <img src="<?php echo $foto; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                            <img src="<?php echo $foto; ?>" class="rounded-circle" alt="Ternakku" height="60" width="60">
                         </a>
                     </div>
                 </form>
@@ -134,7 +134,7 @@ if (isset($_POST['info'])) {
                         $judul = $row['judul'];
                         $deskripsi = $row['deskripsi'];
                         $foto = $row['foto'];
-                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<div class="card px-0 m-1" style="width: 10rem;">';
                         echo '<a href="penjelasan_informasi.php?id=' . $id . '">';
                         echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
                         echo '</a>';
