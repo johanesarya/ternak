@@ -43,7 +43,6 @@ if (isset($_GET['id'])) {
         $harga = $row['harga'];
         $stok = $row['stok'];
         $keterangan = $row['keterangan'];
-        $deskripsi = $row['deskripsi'];
         $foto = $row['foto'];
 
         // Format harga to Rupiah
@@ -85,7 +84,7 @@ if (isset($_POST['bayar'])) {
 
             if ($jual && $updateStok) {
                 // Jika sukses, kembali ke pasar.php
-                header('location: pasar.php');
+                header('location: riwayat.php');
                 exit();
             } else {
                 // Jika gagal, tampilkan pesan
@@ -162,7 +161,6 @@ if (isset($_POST['bayar'])) {
                     <h1><?= $nama_barang; ?></h1>
                     <h6>Stok Barang: <?= $stok; ?></h6>
                     <h3><?= $harga_rupiah; ?></h3>
-                    <p><?= $deskripsi; ?></p>
                     <div class="pt-3 d-flex align-items-end">
                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalYakin" style="border-color: #7FD0A7; color: #7FD0A7; font-family: POPPIN;">
                             Beli Sekarang
@@ -221,7 +219,7 @@ if (isset($_POST['bayar'])) {
                         <input type="hidden" name="id_barang" value="<?= $id_barang; ?>">
                         <input type="hidden" name="user_jual" value="<?= $user_jual; ?>">
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
+                            <label for="nama" class="form-label">Nama Barang</label>
                             <input name="nama_barang" value="<?php echo $nama_barang; ?>" type="text" class="form-control" id="nama" readonly>
                         </div>
                         <div class="mb-3">
