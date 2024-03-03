@@ -1,2 +1,2 @@
 # ternak
-Merupakan sebuah website yang menyambungkan antara peternak untuk dapat memperoleh informasi dan sebagai tempat jual beli yang mudah.
+untuk memberikan informasi kepada para petani dan peternak mengenai berbagai masalah yang berkaitan dengan tumbuhan dan hewan, serta memberikan kemudahan kepada mereka untuk melakukan jual beli kebutuhan pertanian dan peternakan. 
