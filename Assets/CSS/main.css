@@ -29,19 +29,10 @@
 .nav-link {
   font-size: 20px;
   color: #7fd0a7;
-  font-family: POPPINBOLD;
 }
 
 .nav-item {
   margin-right: 20px;
-}
-
-.container-fluid h1 {
-  font-family: POPPINBOLD;
-}
-
-.container-fluid .text-start {
-  font-family: POPPINBOLD;
 }
 
 .btn.btn-outline-primary:hover {
@@ -50,21 +41,12 @@
   border-color: #7fd0a7;
 }
 
-.modal {
-  font-family: POPPIN;
-}
-
-.modal-title {
-  font-family: POPPINBOLD;
-}
-
 .daftar a {
   text-decoration: none;
   color: #7fd0a7;
 }
 
 .card-judul {
-  font-family: POPPINBOLD;
   text-align: center;
 }
 
@@ -74,20 +56,32 @@
   text-align: center;
 }
 
+.nav-link,
+.container-fluid h1,
+.container-fluid .text-start,
+.modal-title,
+.card-judul,
 .col-deskripsi h2,
-h3 {
+h3,
+.text-jual h1,
+.col-deskripsi h6,
+.text-bayar h2 {
   font-family: POPPINBOLD;
 }
 
 .col-deskripsi h6 {
-  font-family: POPPIN;
   color: grey;
 }
 
-.text-counter {
+.modal,
+.text-counter,
+.container-fluid h3,
+.text-penjualan p,
+.text-isi-bayar p,
+.text-isi-bayar h5 {
   font-family: POPPIN;
 }
 
-.container-fluid h3 {
-  font-family: POPPIN;
+.text-penjualan p {
+  font-size: 1rem;
 }

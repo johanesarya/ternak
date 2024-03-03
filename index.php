@@ -1,3 +1,71 @@
+<?php
+include 'Setting/connect.php';
+
+$connect = koneksi();
+$error = '';
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['signup'])) {
+        // Proses Signup
+        $username = $_POST["email"];
+        $password = $_POST["pass"];
+
+        $validDomain = 'gmail.com';
+        $pattern = '/^[a-zA-Z0-9._%+-]+@' . preg_quote($validDomain, '/') . '$/';
+
+        if (!preg_match($pattern, $username)) {
+            $error = "Email harus berformat email dengan domain $validDomain";
+        } else {
+            $hashedPassword = hash('sha512', $password);
+            $alamat = null;
+            $foto = null;
+
+            $query = "INSERT INTO tb_akun (user, pass, alamat, foto) VALUES (?, ?, ?, ?)";
+            $stmt = $connect->prepare($query);
+            $stmt->bind_param("ssss", $username, $hashedPassword, $alamat, $foto);
+
+            if ($stmt->execute()) {
+                session_start();
+                $_SESSION['user'] = $username;
+                echo '<script>alert("Signup berhasil. Anda akan diarahkan ke halaman index."); window.location.href = "index.php";</script>';
+                exit();
+            } else {
+                $error = "Error: " . $connect->error;
+            }
+
+            $stmt->close();
+        }
+    } elseif (isset($_POST['signin'])) {
+        // Proses Signin
+        $username = $_POST["email"];
+        $password = $_POST["pass"];
+
+        $hashedPassword = hash('sha512', $password);
+
+        $query = "SELECT * FROM tb_akun WHERE user=? AND pass=?";
+        $stmt = $connect->prepare($query);
+        $stmt->bind_param("ss", $username, $hashedPassword);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            // Login berhasil
+            session_start();
+            $_SESSION['user'] = $username;
+            echo '<script>alert("Login berhasil. Anda akan diarahkan ke halaman index."); window.location.href = "Pages/index.php";</script>';
+            exit();
+        } else {
+            // Login gagal
+            $error = "Username atau password salah";
+            echo '<script>alert("Login gagal. ' . $error . '");</script>';
+        }
+
+        $stmt->close();
+    }
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -31,17 +99,13 @@
                         <a class="nav-link" aria-current="page" href="#">Beranda</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pasar</a>
+                        <a class="nav-link" href="#" onclick="return cekLogin()">Pasar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Informasi</a>
+                        <a class="nav-link" href="#" onclick="return cekLogin()">Informasi</a>
                     </li>
                 </ul>
                 <form class="d-flex justify-content-end">
-                    <div class="navbar-brand">
-                        <i class="fa-solid fa-bag-shopping fa-xl" style="color: #7fd0a7;"></i>
-                    </div>
-                    <div class="vr" style="margin-right: 16px; color: #7FD0A7;"></div>
                     <div id="btn-navbar">
                         <button class="btn btn-outline-primary" type="button" style="border-color: #7FD0A7; color: #7FD0A7; font-family: POPPINBOLD;" data-bs-toggle="modal" data-bs-target="#modalMasuk">Masuk</button>
                         <button class="btn btn-primary" type="button" style="background-color: #7FD0A7;font-family: POPPINBOLD; border: none;" data-bs-toggle="modal" data-bs-target="#modalDaftar">Daftar</button>
@@ -89,44 +153,31 @@
         <div class="container-fluid">
             <h1>Informasi Terkini</h1>
         </div>
-        <div class="container-fluid">
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
+        <div class="container-fluid justify-content-center">
+            <div class="row row-cols-2 row-cols-md-3 justify-content-center">
+                <?php
+                $query = "SELECT * FROM tb_info LIMIT 6";
+                $result = mysqli_query($connect, $query);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $id = $row['id'];
+                        $judul = $row['judul'];
+                        $deskripsi = $row['deskripsi'];
+                        $foto = str_replace('../Users', 'Users', $row['foto']);
+                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<a href="#" onclick="return cekLogin()">';
+                        echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
+                        echo '</a>';
+                        echo '<div class="card-body">';
+                        echo '<p class="card-text mb-0 card-judul">' . $judul . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "Tidak ada data.";
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -154,17 +205,22 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput">Email</label>
-                    </div>
-                    <div class="form-floating">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                        <label for="floatingPassword">Password</label>
-                    </div>
+                    <form action="" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                            <label for="floatingInput">Email</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <div class="mt-3">
+                            <button class="form-control" name="signin" type="submit" class="btn btn-primary col" style="background-color: #7FD0A7;font-family: POPPINBOLD; border: none;">Masuk</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary col" style="background-color: #7FD0A7;font-family: POPPINBOLD; border: none;">Masuk</button>
+
                 </div>
             </div>
         </div>
@@ -187,18 +243,25 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput">Email</label>
-                    </div>
-                    <div class="form-floating">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                        <label for="floatingPassword">Password</label>
-                    </div>
+                    <form action="" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                            <label for="floatingInput">Email</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                        <div class="mt-3">
+                            <button name="signup" type="submit" class=" form-control btn btn-primary col" style="background-color: #7FD0A7;font-family: POPPINBOLD; border: none;">Daftar</button>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary col" style="background-color: #7FD0A7;font-family: POPPINBOLD; border: none;">Daftar</button>
                 </div>
+                <?php if (isset($error)) {
+                    echo "<p class='mt-3 text-danger text-center'>$error</p>";
+                } ?>
             </div>
         </div>
     </div>
@@ -216,6 +279,16 @@
                 $('#modalDaftar').modal('hide');
             });
         });
+
+        function cekLogin() {
+            var loggedIn = '<?php echo isset($_SESSION['user']) ? "true" : "false"; ?>';
+
+            if (loggedIn !== "true") {
+                var alertMessage = "Silakan login terlebih dahulu untuk mengakses halaman ini.";
+                alert(alertMessage);
+                return false;
+            }
+        }
     </script>
 </body>
 

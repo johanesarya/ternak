@@ -1,3 +1,72 @@
+<?php
+session_start();
+include '../Setting/connect.php';
+
+$connect = koneksi();
+
+$username = $_SESSION['user'];
+
+// Query untuk mengambil data user berdasarkan username
+$query = "SELECT * FROM tb_akun WHERE user=?";
+$stmt = $connect->prepare($query);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    // User ditemukan, ambil data
+    $row = $result->fetch_assoc();
+    $foto_profil = $row['foto'];
+    $nama = $row['nama'];
+    $alamat = $row['alamat'];
+    if ($foto_profil === null || empty($foto_profil)) {
+        $foto_profil = "../Assets/Photos/user.png"; // Ganti dengan lokasi foto default
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['keyword'])) {
+    $keyword = $_GET['keyword'];
+
+    // Query untuk mencari nama barang yang sesuai dengan keyword
+    $query = "SELECT * FROM tb_jual WHERE nama_barang LIKE ? ";
+    $stmt = $connect->prepare($query);
+    $keyword = "%$keyword%"; // Tambahkan wildcard untuk pencarian yang lebih luas
+    $stmt->bind_param("s", $keyword);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Tampilkan hasil pencarian
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $id = $row['id'];
+            $nama_barang = $row['nama_barang'];
+            $harga = $row['harga'];
+            $stok = $row['stok'];
+            $keterangan = $row['keterangan'];
+            $foto = $row['foto'];
+
+            // Format harga to Rupiah
+            $harga_rupiah = "Rp " . number_format($harga, 0, ',', '.');
+
+            // Tampilkan hasil pencarian sesuai format yang diinginkan
+            echo '<div class="card px-0 m-1" style="width: 12rem;">';
+            echo '<a href="deskripsi.php?id=' . $id . '">';
+            echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
+            echo '</a>';
+            echo '<div class="card-body">';
+            echo '<p class="card-text mb-0 card-judul">' . $nama_barang . '</p>';
+            echo '<p class="card-text card-harga">' . $harga_rupiah . '</p>';
+            echo '</div>';
+            echo '</div>';
+        }
+    } else {
+        echo "Barang tidak ditemukan.";
+    }
+
+    $stmt->close();
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -22,18 +91,20 @@
             <a class="navbar-brand d-md-block d-lg-none" href="index.php">
                 <img src="../Assets/Photos/logo.png" class="img-fluid" alt="Ternakku" width="50">
             </a>
-            <form class="d-flex justify-content-start" role="search">
-                <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search">
+            <form id="searchForm" class="d-flex justify-content-start" role="search">
+                <input id="searchInput" class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-sm btn-primary me-2" style="background-color: #7FD0A7; border: none;" type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </form>
-            <form class="d-flex justify-content-end">
-                <div class="navbar-brand me-0">
-                    <i class="fa-solid fa-bag-shopping fa-xl" style="color: #7fd0a7;"></i>
-                    <img src="../Assets/Photos/tester.png" class="rounded-circle" width="50">
-                </div>
-            </form>
+            <div class="navbar-brand">
+                <a href="jualan.php" style="text-decoration: none;">
+                    <i class="fa-solid fa-store fa-xl pe-4" style="color: #7fd0a7;"></i>
+                </a>
+                <a href="user.php">
+                    <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                </a>
+            </div>
         </div>
     </nav>
 
@@ -71,119 +142,85 @@
         </div>
     </div>
 
-    <div class="container-fluid p-2 pb-3 pt-3" style="background-color: #F6F6F6;">
+    <div class="container-fluid p-2 pb-0 pt-3" style="background-color: #F6F6F6;">
         <div class="container-fluid">
             <div class="row row-cols-2 row-cols-md-3 justify-content-center">
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
-                <div class="card px-0 m-1" style="width: 12rem;">
-                    <a href="deskripsi.php">
-                        <img src="../Assets/Photos/tester.png" class="card-img-top" alt="...">
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text mb-0 card-judul">Asam Urat</p>
-                        <p class="card-text card-harga">Rp 25.000</p>
-                    </div>
-                </div>
+                <?php
+                // Items per page
+                $items_per_page = 12;
+
+                // Current page
+                $page = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
+
+                // Offset calculation
+                $offset = ($page - 1) * $items_per_page;
+
+                $query = "SELECT * FROM tb_jual LIMIT $offset, $items_per_page";
+                $result = mysqli_query($connect, $query);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $id = $row['id'];
+                        $nama_barang = $row['nama_barang'];
+                        $harga = $row['harga'];
+                        $stok = $row['stok'];
+                        $keterangan = $row['keterangan'];
+                        $foto = $row['foto'];
+
+                        // Format harga to Rupiah
+                        $harga_rupiah = "Rp " . number_format($harga, 0, ',', '.');
+
+                        // Link to deskripsi.php with ID barang as parameter
+                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<a href="deskripsi.php?id=' . $id . '">';
+                        echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
+                        echo '</a>';
+                        echo '<div class="card-body">';
+                        echo '<p class="card-text mb-0 card-judul">' . $nama_barang . '</p>';
+                        echo '<p class="card-text card-harga">' . $harga_rupiah . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "Tidak ada data.";
+                }
+                ?>
             </div>
         </div>
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center pt-3">
+            <ul class="pagination">
+                <?php
+                // Count total products
+                $total_rows = mysqli_num_rows(mysqli_query($connect, "SELECT * FROM tb_jual"));
+
+                // Total pages
+                $total_pages = ceil($total_rows / $items_per_page);
+
+                // Previous page
+                if ($page > 1) {
+                    echo '<li class="page-item"><a class="page-link" href="?page=' . ($page - 1) . '">&laquo;</a></li>';
+                } else {
+                    echo '<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>';
+                }
+
+                // Page links
+                for ($i = 1; $i <= $total_pages; $i++) {
+                    if ($page == $i) {
+                        echo '<li class="page-item active"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+                    } else {
+                        echo '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+                    }
+                }
+
+                // Next page
+                if ($page < $total_pages) {
+                    echo '<li class="page-item"><a class="page-link" href="?page=' . ($page + 1) . '">&raquo;</a></li>';
+                } else {
+                    echo '<li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>';
+                }
+                ?>
+            </ul>
+        </nav>
     </div>
 
     <div class="container-fluid">
@@ -192,7 +229,34 @@
         </footer>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchForm').submit(function(event) {
+                event.preventDefault(); // Prevent form submission
+
+                var keyword = $('#searchInput').val().toLowerCase(); // Get search keyword
+
+                $('.container-fluid.p-2.pb-0.pt-3 .card').each(function() {
+                    var nama_barang = $(this).find('.card-judul').text().toLowerCase();
+
+                    if (nama_barang.indexOf(keyword) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Reset search form
+            $('#searchInput').on('input', function() {
+                if ($(this).val() === '') {
+                    $('.container-fluid.p-2.pb-0.pt-3 .card').show();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

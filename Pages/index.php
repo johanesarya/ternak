@@ -1,3 +1,28 @@
+<?php
+session_start();
+include '../Setting/connect.php';
+
+$connect = koneksi();
+
+$username = $_SESSION['user'];
+
+// Query untuk mengambil data user berdasarkan username
+$query = "SELECT * FROM tb_akun WHERE user=?";
+$stmt = $connect->prepare($query);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    // User ditemukan, ambil data
+    $row = $result->fetch_assoc();
+    $foto = $row['foto'];
+    if ($foto === null || empty($foto)) {
+        $foto = "../Assets/Photos/user.png"; // Ganti dengan lokasi gambar default
+    }
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -39,8 +64,15 @@
                 </ul>
                 <form class="d-flex justify-content-end">
                     <div class="navbar-brand">
-                        <i class="fa-solid fa-bag-shopping fa-xl pe-4" style="color: #7fd0a7;"></i>
-                        <img src="../Assets/Photos/tester.png" class="rounded-circle" width="80">
+                        <a href="berita.php" style="text-decoration: none;">
+                            <i class="fa-solid fa-circle-info fa-xl pe-4" style="color: #7fd0a7;"></i>
+                        </a>
+                        <a href="jualan.php" style="text-decoration: none;">
+                            <i class="fa-solid fa-store fa-xl pe-4" style="color: #7fd0a7;"></i>
+                        </a>
+                        <a href="user.php">
+                            <img src="<?php echo $foto; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                        </a>
                     </div>
                 </form>
             </div>
@@ -49,7 +81,9 @@
 
     <div class="container-xxl p-2 pb-3 custom-bg" style="background-color: #64B2FA; color: white;">
         <div class="container-fluid">
-            <h1>Mau Beli apa?</h1>
+            <a href="pasar.php" style="text-decoration: none; color: white;">
+                <h1>Mau Beli apa?</h1>
+            </a>
         </div>
         <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
             <div class="carousel-indicators">
@@ -83,46 +117,35 @@
 
     <div class="container-fluid p-2 pb-3" style="background-color: #F6F6F6;">
         <div class="container-fluid">
-            <h1><a href="informasi.php" style="text-decoration: none; color: black;">Informasi Terkini</a></h1>
+            <a href="informasi.php" style="text-decoration: none; color: black;">
+                <h1>Informasi Terkini</h1>
+            </a>
         </div>
         <div class="container-fluid">
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="container-fluid text-start">
-                        <img class="img-fluid" src="../Assets/Photos/tester.png" width="343">
-                        <p class="container-fluid text-xl">Tutorial Pemberian Obat Cacing pada Kucing</p>
-                    </div>
-                </div>
+            <div class="row row-cols-2 row-cols-md-3 justify-content-center">
+                <?php
+                $query = "SELECT * FROM tb_info LIMIT 6";
+                $result = mysqli_query($connect, $query);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $id = $row['id'];
+                        $judul = $row['judul'];
+                        $deskripsi = $row['deskripsi'];
+                        $foto = $row['foto'];
+                        echo '<div class="card px-0 m-1" style="width: 12rem;">';
+                        echo '<a href="penjelasan_informasi.php?id=' . $id . '">';
+                        echo '<img src="' . $foto . '" class="card-img-top" alt="...">';
+                        echo '</a>';
+                        echo '<div class="card-body">';
+                        echo '<p class="card-text mb-0 card-judul">' . $judul . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "Tidak ada data.";
+                }
+                ?>
             </div>
         </div>
     </div>

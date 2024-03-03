@@ -1,3 +1,110 @@
+<?php
+session_start();
+include '../Setting/connect.php';
+
+$connect = koneksi();
+
+$username = $_SESSION['user'];
+
+// Query untuk mengambil data user berdasarkan username
+$query = "SELECT * FROM tb_akun WHERE user=?";
+$stmt = $connect->prepare($query);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    // User ditemukan, ambil data
+    $row = $result->fetch_assoc();
+    $foto_profil = $row['foto'];
+    $nama = $row['nama'];
+    $alamat = $row['alamat'];
+    if ($foto_profil === null || empty($foto_profil)) {
+        $foto_profil = "../Assets/Photos/user.png"; // Ganti dengan lokasi foto default
+    }
+}
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+
+    // Query untuk mengambil data produk berdasarkan ID
+    $query2 = "SELECT * FROM tb_jual WHERE id=?";
+    $stmt2 = $connect->prepare($query2);
+    $stmt2->bind_param("i", $id);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+
+    if ($result2->num_rows === 1) {
+        // Data produk ditemukan
+        $row = $result2->fetch_assoc();
+        $id_barang = $row['id'];
+        $user_jual = $row['user'];
+        $nama_barang = $row['nama_barang'];
+        $harga = $row['harga'];
+        $stok = $row['stok'];
+        $keterangan = $row['keterangan'];
+        $deskripsi = $row['deskripsi'];
+        $foto = $row['foto'];
+
+        // Format harga to Rupiah
+        $harga_rupiah = "Rp " . number_format($harga, 0, ',', '.');
+    } else {
+        // Produk tidak ditemukan
+        echo "Produk tidak ditemukan.";
+        exit();
+    }
+} else {
+    // ID tidak ada
+    echo "ID tidak tersedia.";
+    exit();
+}
+
+if (isset($_POST['bayar'])) {
+    $nama_barang = $_POST['nama_barang'];
+    $alamat = $_POST['alamat'];
+    $jumlah = $_POST['jumlah'];
+    $total = $jumlah * $harga;
+    $uploadDirectory = '../Users/' . $username . '/Pembelian/';
+
+    // Membuat folder jika belum ada
+    if (!file_exists($uploadDirectory)) {
+        mkdir($uploadDirectory, 0777, true); // Membuat folder dengan izin 0777
+    }
+
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $tempFileName = $_FILES['foto']['tmp_name'];
+        $originalFileName = $_FILES['foto']['name'];
+        $uploadedFilePath = $uploadDirectory . $originalFileName;
+
+        if (move_uploaded_file($tempFileName, $uploadedFilePath)) {
+            // Simpan ke tabel tb_beli
+            $jual = mysqli_query($connect, "INSERT INTO tb_beli (nama_barang, jumlah, total, user_penjual, user_pembeli, alamat, bukti_bayar) VALUES ('$nama_barang', '$jumlah', '$total', '$user_jual', '$username', '$alamat', '$uploadedFilePath')");
+
+            // Kurangi stok barang di tb_jual
+            $updateStok = mysqli_query($connect, "UPDATE tb_jual SET stok = stok - '$jumlah' WHERE id = '$id_barang'");
+
+            if ($jual && $updateStok) {
+                // Jika sukses, kembali ke pasar.php
+                header('location: pasar.php');
+                exit();
+            } else {
+                // Jika gagal, tampilkan pesan
+                echo 'Gagal melakukan pembelian.';
+                exit();
+            }
+        } else {
+            // Jika gagal upload file
+            echo 'Error handling the picture!';
+        }
+    } else {
+        // Jika tidak ada file yang diupload
+        echo 'No file uploaded!';
+    }
+}
+
+
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -30,8 +137,14 @@
             </form>
             <form class="d-flex justify-content-end">
                 <div class="navbar-brand me-0">
-                    <i class="fa-solid fa-bag-shopping fa-xl" style="color: #7fd0a7;"></i>
-                    <img src="../Assets/Photos/tester.png" class="rounded-circle" width="50">
+                    <button type="button" style="background-color: white; border-color:white;" class="btn btn-primary position-relative">
+                        <a href="riwayat.php">
+                            <i class="fa-solid fa-bag-shopping fa-xl" style="color: #7fd0a7;"></i>
+                        </a>
+                    </button>
+                    <a href="user.php">
+                        <img src="<?php echo $foto_profil; ?>" class="rounded-circle" alt="Ternakku" width="80">
+                    </a>
                 </div>
             </form>
         </div>
@@ -39,43 +152,28 @@
 
     <div class="container-fluid p-2 pb-3 pt-3" style="background-color: #F6F6F6;">
         <div class="container-fluid p-4">
-            <div class="row">
+            <div class="row container-fluid">
+                <input type="hidden" name="id_barang" value="<?= $id_barang; ?>">
+                <input type="hidden" name="user_jual" value="<?= $user_jual; ?>">
                 <div class="col-md-3 d-flex justify-content-center g-0">
-                    <img src="../Assets/Photos/tester.png" class="img-fluid" alt="Tester" style="max-width: 100%;" width="338">
+                    <img src="<?= $foto; ?>" class="img-fluid" alt="<?= $nama_barang; ?>" style="max-width: 100%;" width="338">
                 </div>
-                <div class="col-md-7 col-deskripsi px-4">
-                    <h1>Asam Urat</h1>
-                    <h6>2.000 terjual</h6>
-                    <h3>Rp 25.000</h3>
-                    <div class=" container px-0 d-flex justify-content-start">
-                        <div class="row g-0">
-                            <div class="col-xxl-6">
-                                <div class="input-group pe-2 align-items-center">
-                                    <p class="me-2 mb-0 text-counter">Kuantitas</p>
-                                    <button type="button" class="btn btn-outline-secondary" data-target="#inputQuant" data-toggle="counter" data-action="minus">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <input id="inputQuant" type="text" name="quant[1]" class="form-control input-number" value="1" min="1" max="10">
-                                    <button type="button" class="btn btn-outline-secondary" data-target="#inputQuant" data-toggle="counter" data-action="plus">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-7 col-deskripsi px-4 pt-2">
+                    <h1><?= $nama_barang; ?></h1>
+                    <h6>Stok Barang: <?= $stok; ?></h6>
+                    <h3><?= $harga_rupiah; ?></h3>
+                    <p><?= $deskripsi; ?></p>
                     <div class="pt-3 d-flex align-items-end">
-                        <button type="button" class="btn btn-primary me-2" style="background-color: #7FD0A7; font-family: POPPIN; border: none;">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Masukkan Keranjang
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalYakin" style="border-color: #7FD0A7; color: #7FD0A7; font-family: POPPIN;">
+                            Beli Sekarang
                         </button>
-                        <button class="btn btn-outline-primary" type="button" style="border-color: #7FD0A7; color: #7FD0A7; font-family: POPPIN;">Middle</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="container-fluid p-2">
-            <h3 class="p-2" style="background-color: #7fd0a7; color: white;">Keterangan Produk</h2>
-
+        <div class="container-fluid p-2 text-penjualan">
+            <h3 class="p-2 container-fluid" style="background-color: #7fd0a7; color: white;">Keterangan Produk</h3>
+            <p><?= $keterangan; ?></p>
         </div>
     </div>
 
@@ -85,41 +183,85 @@
         </footer>
     </div>
 
+    <!-- Modal Yakin -->
+    <div class="modal fade" id="modalYakin" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="modal-title fs-4" id="exampleModalLabel">Validasi</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="card-title">Pilih Metode Pembayaran</h5>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4>Transfer Bank</h4>
+                            <p>Silakan transfer ke rekening berikut:</p>
+                            <p><strong>Bank:</strong> Bank ABC</p>
+                            <p><strong>Nomor Rekening:</strong> 1234-5678-9012</p>
+                            <p><strong>Atas Nama:</strong> Ternakku</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>E-Wallet</h4>
+                            <p>Anda juga dapat menggunakan e-wallet berikut:</p>
+                            <p><strong>OVO:</strong> 0812-3456-7890</p>
+                            <p><strong>GoPay:</strong> 0812-3456-7890</p>
+                            <p><strong>Dana:</strong> 0812-3456-7890</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <form method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="total" id="total_hidden">
+                        <input type="hidden" name="id_barang" value="<?= $id_barang; ?>">
+                        <input type="hidden" name="user_jual" value="<?= $user_jual; ?>">
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama</label>
+                            <input name="nama_barang" value="<?php echo $nama_barang; ?>" type="text" class="form-control" id="nama" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">Alamat</label>
+                            <input name="alamat" value="<?php echo $alamat; ?>" type="text" class="form-control" id="alamat" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jumlah" class="form-label">Jumlah Beli</label>
+                            <input type="text" name="jumlah" class="form-control" id="jumlah" placeholder="Jumlah Beli" onkeyup="hitungTotal()">
+                        </div>
+                        <div class="mb-3">
+                            <label for="total" class="form-label">Total Harga</label>
+                            <div class="input-group">
+                                <input name="total" value="Rp <?= number_format($harga, 0, ',', '.'); ?>" type="text" class="form-control" id="total" readonly>
+                                <button class="btn btn-primary" type="button" id="hitungTotalBtn" onclick="hitungTotal()" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">Hitung Total</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bukti" class="form-label">Bukti Pembayaran</label>
+                            <input class="file-input" type="file" name="foto" placeholder="Foto Profil" id="foto" accept=".jpeg, .jpg, .png" max-file-size="10000000" required>
+                        </div>
+                        <button type="submit" name="bayar" class="btn btn-primary form-control">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Temukan elemen tombol plus dan minus
-            var btnPlus = document.querySelector('[data-action="plus"]');
-            var btnMinus = document.querySelector('[data-action="minus"]');
-
-            // Temukan elemen input counter
-            var inputCounter = document.querySelector('#inputQuant');
-
-            // Tambahkan event listener untuk tombol plus
-            btnPlus.addEventListener('click', function() {
-                var currentValue = parseInt(inputCounter.value);
-                var maxValue = parseInt(inputCounter.getAttribute('max'));
-
-                if (!isNaN(maxValue) && currentValue < maxValue) {
-                    inputCounter.value = currentValue + 1;
-                } else if (isNaN(maxValue)) {
-                    inputCounter.value = currentValue + 1;
-                }
-            });
-
-            // Tambahkan event listener untuk tombol minus
-            btnMinus.addEventListener('click', function() {
-                var currentValue = parseInt(inputCounter.value);
-                var minValue = parseInt(inputCounter.getAttribute('min'));
-
-                if (!isNaN(minValue) && currentValue > minValue) {
-                    inputCounter.value = currentValue - 1;
-                } else if (isNaN(minValue)) {
-                    inputCounter.value = currentValue - 1;
-                }
-            });
-        });
+        function hitungTotal() {
+            var jumlah = document.getElementById('jumlah').value;
+            var harga = <?= $harga; ?>;
+            var total = jumlah * harga;
+            document.getElementById('total').value = "Rp " + total.toLocaleString('id-ID');
+            document.getElementById('total_hidden').value = total; // Update nilai input hidden
+        }
     </script>
 </body>
 
