@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pattern = '/^[a-zA-Z0-9._%+-]+@' . preg_quote($validDomain, '/') . '$/';
 
         if (!preg_match($pattern, $username)) {
-            $error = "Email harus menggunakan domain $validDomain";
+            $error = "Email harus berformat email dengan domain $validDomain";
         } else {
             $hashedPassword = hash('sha512', $password);
             $alamat = null;
